@@ -1,0 +1,12 @@
+services:
+  postgresql:
+    image: "postgres:18.0-trixie"
+    container_name: "postgresql"
+    environment:
+      POSTGRES_USER: elt_user
+      POSTGRES_PASSWORD: elt_password
+      POSTGRES_DB: elt_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data"
