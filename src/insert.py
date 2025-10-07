@@ -136,7 +136,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     run(main("2017/07/1000-Sales-Records.zip"))
-    # run(main("2017/07/10000-Sales-Records.zip"))
-    # run(main("2017/07/100000-Sales-Records.zip"))
-    # run(main("2017/07/1000000%20Sales%20Records.zip"))
-    # run(main("2020/09/5m-Sales-Records.zip"))
+    run(main("2017/07/10000-Sales-Records.zip"))
+    run(main("2017/07/100000-Sales-Records.zip"))
+    run(main("2017/07/1000000%20Sales%20Records.zip"))
+    run(main("2020/09/5m-Sales-Records.zip"))
