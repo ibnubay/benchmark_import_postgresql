@@ -52,7 +52,7 @@ async def download_data(file_name: str):
 
     timeout = Timeout(60.0, connect=10.0)
     limits = Limits(max_connections=10, max_keepalive_connections=5)
-    async with AsyncClient(http2=True, timeout=timeout, limits=limits) as client:
+    async with AsyncClient(http2=False, timeout=timeout, limits=limits) as client:
         async with client.stream("GET", zip_url) as response:
             response.raise_for_status()
             with zip_file.open("wb") as f:
