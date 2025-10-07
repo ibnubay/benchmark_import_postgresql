@@ -1,0 +1,7 @@
+line-length = 120
+
+
+[lint]
+# Ensure these are not disabled
+select = ["E", "F", "I"]  # I001, I002 are import-related codes
+ignore = []

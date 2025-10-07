@@ -1,0 +1,11 @@
+[project]
+name = "benchmark-import-postgresql"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx[http2]==0.28.1",
+    "psycopg[binary]==3.2.10",
+    "python-dotenv==1.1.1",
+]
