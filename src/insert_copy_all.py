@@ -43,14 +43,11 @@ async def create_table():
 
 async def read_csv(file_name: str):
     csv_file = Path(__file__).absolute().parent.parent.joinpath(file_name)
-    total = 0
     if csv_file.exists():
         conn = await pg_connect()
         async with conn.cursor() as cur:
             await load_data(cur, csv_file)
             await conn.commit()
-
-    print(f"Total {total} rows inserted")
 
 
 async def load_data(cur, file_path: Path):
