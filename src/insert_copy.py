@@ -43,7 +43,7 @@ async def create_table():
 
 
 async def read_csv(file_name: str):
-    csv_file = Path(__file__).absolute().parent.parent.joinpath(file_name.replace(".zip", ".csv"))
+    csv_file = Path(__file__).absolute().parent.parent.joinpath(file_name)
     batch_csv_file = Path(__file__).absolute().parent.joinpath("sales_batch.csv")
     total = 0
     if csv_file.exists():
@@ -116,16 +116,11 @@ async def cleanup_data():
         await conn.commit()
 
 
-def delete_file():
-    csv_file = Path(__file__).absolute().parent.joinpath("sales.csv")
-    csv_file.unlink(missing_ok=True)
-
-
 if __name__ == "__main__":
     load_dotenv()
 
-    run(main("1000-Sales-Records.zip"))
-    run(main("10000-Sales-Records.zip"))
-    run(main("100000-Sales-Records.zip"))
-    run(main("1000000-Sales-Records.zip"))
-    run(main("5m-Sales-Records.zip"))
+    run(main("1000-Sales-Records.csv"))
+    run(main("10000-Sales-Records.csv"))
+    run(main("100000-Sales-Records.csv"))
+    run(main("1000000-Sales-Records.csv"))
+    run(main("5m-Sales-Records.csv"))

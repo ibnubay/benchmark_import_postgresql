@@ -1,7 +1,6 @@
 import logging
 import time
 from asyncio import run
-from csv import reader
 from os import getenv
 from pathlib import Path
 
@@ -46,30 +45,21 @@ async def read_csv(file_name: str):
     csv_file = Path(__file__).absolute().parent.parent.joinpath(file_name)
     total = 0
     if csv_file.exists():
-        counter = 0
         conn = await pg_connect()
-        async with conn.pipeline():
-            with csv_file.open("r", newline="") as fo:
-                r = reader(fo)
-                _ = next(r)
+        async with conn.cursor() as cur:
+            await load_data(cur, csv_file)
+            await conn.commit()
 
-                for row in r:
-                    await load_data(conn, row)
-                    counter += 1
-                    if counter == 1000:
-                        total += counter
-                        await conn.commit()
-                        counter = 0
-
-            if counter > 1:
-                total += counter
-                await conn.commit()
     print(f"Total {total} rows inserted")
 
 
-async def load_data(cur, row: list):
-    sql = "INSERT INTO sales VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    await cur.execute(sql, row)
+async def load_data(cur, file_path: Path):
+    batch_commit = 1024 * 1024  # 1 MB
+    sql = "COPY sales FROM STDIN WITH CSV HEADER"
+    with open(file_path, mode="r") as fo:
+        async with cur.copy(sql) as copy:
+            while data := fo.read(batch_commit):
+                await copy.write(data)
 
 
 async def main(file_name: str):
@@ -82,7 +72,7 @@ async def main(file_name: str):
     end = time.perf_counter()
     print(f"Execution time of {file_name}: {end - start:.6f} seconds")
 
-    # await cleanup_data()
+    await cleanup_data()
 
 
 async def cleanup_data():
