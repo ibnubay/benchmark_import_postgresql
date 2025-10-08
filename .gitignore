@@ -59,3 +59,5 @@ cython_debug/
 
 # Custom
 .DS_Store
+*.csv
+*.zip

@@ -1,0 +1,5 @@
+curl -L -o 1000-Sales-Records.zip https://excelbianalytics.com/wp/wp-content/uploads/2017/07/1000-Sales-Records.zip && unzip -p 1000-Sales-Records.zip > 1000-Sales-Records.csv && \
+curl -L -o 10000-Sales-Records.zip https://excelbianalytics.com/wp/wp-content/uploads/2017/07/10000-Sales-Records.zip && unzip -p 10000-Sales-Records.zip > 10000-Sales-Records.csv && \
+curl -L -o 100000-Sales-Records.zip https://excelbianalytics.com/wp/wp-content/uploads/2017/07/100000-Sales-Records.zip && unzip -p 100000-Sales-Records.zip > 100000-Sales-Records.csv && \
+curl -L -o 1000000-Sales-Records.zip https://excelbianalytics.com/wp/wp-content/uploads/2017/07/1000000%20Sales%20Records.zip && unzip -p 1000000-Sales-Records.zip > 1000000-Sales-Records.csv && \
+curl -L -o 5m-Sales-Records.zip https://excelbianalytics.com/wp/wp-content/uploads/2020/09/5m-Sales-Records.zip && unzip -p 5m-Sales-Records.zip > 5m-Sales-Records.csv

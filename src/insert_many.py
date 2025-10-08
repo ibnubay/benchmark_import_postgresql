@@ -1,13 +1,11 @@
 import logging
 import time
-import zipfile
 from asyncio import run
 from csv import reader
 from os import getenv
 from pathlib import Path
 
 from dotenv import load_dotenv
-from httpx import AsyncClient, Limits, Timeout
 from psycopg import AsyncConnection as ac
 from psycopg.errors import Error
 
@@ -28,10 +26,8 @@ async def pg_connect():
         raise Exception(f"Error while connect database \n{repr(err)}")
 
 
-async def prepare_data(file_name: str):
+async def prepare_data():
     await create_table()
-    await download_data(file_name)
-    unzip_data()
 
 
 async def create_table():
@@ -46,36 +42,8 @@ async def create_table():
                 await conn.close()
 
 
-async def download_data(file_name: str):
-    zip_url = f"https://excelbianalytics.com/wp/wp-content/uploads/{file_name}"
-    zip_file = Path(__file__).absolute().parent.joinpath("sales.zip")
-
-    timeout = Timeout(60.0, connect=10.0)
-    limits = Limits(max_connections=10, max_keepalive_connections=5)
-    async with AsyncClient(http2=False, timeout=timeout, limits=limits) as client:
-        async with client.stream("GET", zip_url) as response:
-            response.raise_for_status()
-            with zip_file.open("wb") as f:
-                async for chunk in response.aiter_bytes(1_048_576):
-                    f.write(chunk)
-
-
-def unzip_data():
-    csv_folder = Path(__file__).absolute().parent
-    zip_file = csv_folder.joinpath("sales.zip")
-    csv_file = csv_folder.joinpath("sales.csv")
-
-    with zipfile.ZipFile(str(zip_file), "r") as zf:
-        csv_files = [f for f in zf.namelist() if f.endswith(".csv")]
-        temp_csv = zf.extract(csv_files[0], path=str(csv_folder))
-        temp_path = csv_folder.joinpath(temp_csv)
-        temp_path.rename(csv_file)
-
-    zip_file.unlink(missing_ok=True)
-
-
-async def read_csv():
-    csv_file = Path(__file__).absolute().parent.joinpath("sales.csv")
+async def read_csv(file_name: str):
+    csv_file = Path(__file__).absolute().parent.parent.joinpath(file_name.replace(".zip", ".csv"))
     total = 0
     if csv_file.exists():
         counter = 0
@@ -103,7 +71,7 @@ async def read_csv():
                 await conn.commit()
                 batch.clear()
 
-    print(f"Total {total} rows inserted")
+        print(f"Total {total} rows inserted")
 
 
 async def load_data(cur, row: list):
@@ -112,16 +80,15 @@ async def load_data(cur, row: list):
 
 
 async def main(file_name: str):
-    await prepare_data(file_name)
+    await prepare_data()
 
     start = time.perf_counter()
 
-    await read_csv()
+    await read_csv(file_name)
 
     end = time.perf_counter()
     print(f"Execution time of {file_name}: {end - start:.6f} seconds")
 
-    delete_file()
     await cleanup_data()
 
 
@@ -141,8 +108,8 @@ def delete_file():
 if __name__ == "__main__":
     load_dotenv()
 
-    run(main("2017/07/1000-Sales-Records.zip"))
-    run(main("2017/07/10000-Sales-Records.zip"))
-    run(main("2017/07/100000-Sales-Records.zip"))
-    run(main("2017/07/1000000%20Sales%20Records.zip"))
-    run(main("2020/09/5m-Sales-Records.zip"))
+    run(main("1000-Sales-Records.zip"))
+    run(main("10000-Sales-Records.zip"))
+    run(main("100000-Sales-Records.zip"))
+    run(main("1000000-Sales-Records.zip"))
+    run(main("5m-Sales-Records.zip"))
